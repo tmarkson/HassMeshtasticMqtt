@@ -1,0 +1,64 @@
+type: vertical-stack
+cards:
+  - square: true
+    columns: 3
+    type: grid
+    title: Meshtastic 6b64
+    cards:
+      - type: gauge
+        entity: sensor.meshtastic_6b64_battery_voltage
+        needle: false
+        max: 4.5
+        min: 0
+        name: batt
+        severity:
+          green: 3.6
+          yellow: 3.5
+          red: 3.4
+      - type: gauge
+        entity: sensor.meshtastic_6b64_air_util_tx
+        needle: false
+        min: 0
+        max: 100
+        name: air tx
+        severity:
+          green: 0
+          yellow: 65
+          red: 80
+      - type: gauge
+        needle: false
+        entity: sensor.meshtastic_6b64_channel_utilization
+        min: 0
+        max: 100
+        name: ch util
+  - square: true
+    columns: 3
+    type: grid
+    title: Meshtastic 98a4
+    cards:
+      - type: gauge
+        entity: sensor.meshtastic_98a4_battery_voltage
+        needle: false
+        max: 4.5
+        min: 0
+        name: batt
+        severity:
+          green: 3.6
+          yellow: 3.5
+          red: 3.4
+      - type: gauge
+        entity: sensor.meshtastic_98a4_air_util_tx
+        needle: false
+        min: 0
+        max: 100
+        name: air tx
+        severity:
+          green: 0
+          yellow: 65
+          red: 80
+      - type: gauge
+        needle: false
+        entity: sensor.meshtastic_98a4_channel_utilization
+        min: 0
+        max: 100
+        name: ch util
