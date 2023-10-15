@@ -1,0 +1,121 @@
+# replace items in double square brackets
+#   node_id is the numeric node id
+#       find it in nodes list from running this command via USB `meshtastic --info`
+#   node_short_mac is the hex value like fafafafa.
+#       Any value can be used here but identical values will tie those Sensors into a single Device.
+#   mqtt_topic is the full topic without trailing slash, like mesh/2/json/UplinkChannelName/!fafafafa
+#       where `mesh` is the mqtt.root value saved on the sending device
+#       and `fafafafa` is the is the short mac of the sending device
+#       and `UplinkChannelName` is the name of the channel with Uplink enabled.
+# Note: NodeInfo packets are only transmitted to primary channel, such as telemetry with battery readings and channel utilization stats. 
+# Note: the sensor ID created in HASS via MQTT is a combination of Device Name and Sensor Name.  When setting the value in the 'else' statements, ensure these match an existing sensor ID.  Or Unknown will be returned. 
+
+sensor:    
+  - unique_id: "meshtastic_[[node_short_mac]]_last_heard"
+    name: "last heard"
+    state_topic: "[[mqtt_topic]]"
+    state_class: measurement
+    device_class: timestamp
+    value_template: >-
+      {% if value_json.from == [[node_id]] and
+            value_json.timestamp is defined %}
+        {{ as_datetime(value_json.timestamp) }}
+      {% else %}
+        {{ states('sensor.meshtastic_[[node_short_mac]]_last_heard') }}
+      {% endif %}
+    expire_after: 3600
+    device:
+      name: "Meshtastic fafa"
+      configuration_url: "http://192.168.1.235"
+      via_device: "25a7753c"
+      manufacturer: "TTGO"
+      model: "TLORA_V2_1_1P6"
+      hw_version: "V2_1_1P6"
+      sw_version: "2.1.23"
+      identifiers:
+        - "fafafafa"
+
+  - unique_id: "meshtastic_[[node_short_mac]]_battery_voltage"
+    name: "battery voltage"
+    state_topic: "[[mqtt_topic]]"
+    state_class: measurement
+    value_template: >-
+      {% if value_json.from == [[node_id]] and
+            value_json.payload.voltage is defined and
+            value_json.payload.temperature is not defined %}
+        {{ (value_json.payload.voltage | float) | round(2) }}
+      {% else %}
+        {{ states('sensor.meshtastic_[[node_short_mac]]_battery_voltage') }}
+      {% endif %}
+    unit_of_measurement: "Volts"
+    expire_after: 3600
+    device:
+      identifiers:
+        - "fafafafa"
+    
+  - unique_id: "meshtastic_[[node_short_mac]]_air_util_tx"
+    name: "air util tx"
+    state_topic: "[[mqtt_topic]]"
+    state_class: measurement
+    value_template: >-
+      {% if value_json.from == [[node_id]] and
+            value_json.payload.air_util_tx is defined %}
+        {{ (value_json.payload.air_util_tx | float) | round(1) }}
+      {% else %}
+        {{ states('sensor.meshtastic_[[node_short_mac]]_air_util_tx') }}
+      {% endif %}
+    unit_of_measurement: "%"
+    expire_after: 3600
+    device:
+      identifiers:
+        - "fafafafa"
+    
+  - unique_id: "meshtastic_[[node_short_mac]]_channel_utilization"
+    name: "channel utilization"
+    state_topic: "[[mqtt_topic]]"
+    state_class: measurement
+    value_template: >-
+      {% if value_json.from == [[node_id]] and
+            value_json.payload.channel_utilization is defined %}
+        {{ (value_json.payload.channel_utilization | int) | round(1) }}
+      {% else %}
+        {{ states('sensor.meshtastic_[[node_short_mac]]_channel_utilization') }}
+      {% endif %}
+    unit_of_measurement: "%"
+    expire_after: 3600
+    device:
+      identifiers:
+        - "fafafafa"
+    
+  - unique_id: "meshtastic_[[node_short_mac]]_short_name"
+    name: "short name"
+    state_topic: "[[mqtt_topic]]"
+    value_template: >-
+      {% if value_json.from == [[node_id]] and
+            value_json.payload.shortname is defined %}
+        {{ value_json.payload.shortname }}
+      {% else %}
+        {{ states('sensor.meshtastic_[[node_short_mac]]_short_name') }}
+      {% endif %}
+    expire_after: 3600
+    device:
+      identifiers:
+        - "fafafafa"
+    
+  - unique_id: "meshtastic_[[node_short_mac]]_long_name"
+    name: "long name"
+    state_topic: "[[mqtt_topic]]"
+    value_template: >-
+      {% if value_json.from == [[node_id]] and
+            value_json.payload.longname is defined %}
+        {{ value_json.payload.longname }}
+      {% else %}
+        {{ states('sensor.meshtastic_[[node_short_mac]]_long_name') }}
+      {% endif %}
+    expire_after: 3600
+    device:
+      identifiers:
+        - "fafafafa"
+    
+
+### END fafa
